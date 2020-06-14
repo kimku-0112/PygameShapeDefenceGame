@@ -2,13 +2,8 @@ import pygame, sys, random
 from pygame.locals import *
 
 FPS             = 60            #┐
-WINDOWWIDTH     = 640           #│
-WINDOWHEIGHT    = 480           #│
-REVEALSPEED     = 8             #│ Define System Information 
-BOXSIZE         = 40            #│
-GAPSIZE         = 0             #│
-BOARDWIDTH      = 10            #│
-BOARDHEIGHT     = 7             #┘
+WINDOWWIDTH     = 640           #│Define System Information 
+WINDOWHEIGHT    = 480           #┘
 
 GRAY        = (100,100,100)     #┐
 NAVYBLUE    = (60,60,100)       #│
@@ -39,11 +34,55 @@ SQUARE          = 'square'      #┐
 TRIANGLE        = 'triangle'    #│ Define Shape 
 PENTAGON        = 'pentagon'    #┘
 
-Shop_Shape      = SQUARE
+REVEALSPEED     = 8              
+BOXSIZE         = 40            
+GAPSIZE         = 0             
+BOARDWIDTH      = 16            
+BOARDHEIGHT     = 11             
+ShopWidth       = WINDOWWIDTH
+ShopHeight      = 40
+
+ShopSize        = [[0,0],[0,ShopWidth],[ShopHeight,ShopWidth],[ShopHeight,0]]   #Size
 
 XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH  * (BOXSIZE + GAPSIZE))) / 2)
 YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT  * (BOXSIZE + GAPSIZE))) / 2)
 
+def getBoxAtPixel(x, y):
+    for boxx in range(BOARDWIDTH):
+        for boxy in range(BOARDHEIGHT):
+            left, top = leftTopCoordsOfBox(boxx, boxy)
+            boxRect = pygame.Rect(left, top, BOXSIZE, BOXSIZE)
+            if boxRect.collidepoint(x, y):
+                return (boxx, boxy)
+    return (None, None)
+    
+def makemap():
+    
+    
+def makeshop():
+    pygame.draw.rect(DISPLAYSURF,Shop_Color,
+
+
+def main():
+    global FPSCLOCK, DISPLAYSURF
+    pygame.init()
+    FPSCLOCK    = pygame.time.Clock()
+    DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH,WINDOWHEIGHT ))
+    DISPLAYSURF.fill(BGCOLOR)
+    
+    mousex      = 0
+    mousey      = 0
+    
+    pygame.display.set_caption('Shape Defence Game')
+    
+    
+    
+    
+    
+    
+if __name__ == '__main__': main()
+
+    
 
 
 
