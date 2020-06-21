@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-=======
-
-
->>>>>>> d04c18293fb0b3a3ccf31730888844657ca8254e
 import pygame, sys, random
 from pygame.locals import *
 
