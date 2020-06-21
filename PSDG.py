@@ -77,21 +77,24 @@ def MakeShop():
     pygame.draw.rect(display_surf,attack_up_color   ,(delay_up_x,delay_up_y,delay_up_width,delay_up_height))
     pygame.draw.rect(display_surf,shop_color        ,(none_x,none_y,none_width,none_heghit))
     pygame.draw.rect(display_surf,gold_color        ,(gold_x,gold_y,gold_width,gold_height))
+    display_surf.bilt(text,(gold_x-10)(gold_y-10))
+    
 
 
 def main():
-    global FPS_clock,display_surf
+    global FPS_clock,display_surf,gold
     pygame.init()
     FPS_clock    = pygame.time.Clock()
     display_surf = pygame.display.set_mode((window_width,window_height ))
     pygame.display.set_caption('Shape Defence Game')
     font = pygame.font.Font('새굴림', 32)
-    text = font.renser("
+    text = font.render("%d",gold,TRUE,(28,0,0))
     
     mouse_x     = 0
     mouse_y     = 0
     
     while True:
+        gold = gold + 1
         MakeMap()
         MakeShop()
     
