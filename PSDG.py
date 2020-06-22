@@ -60,6 +60,10 @@ def MakeMap():
     
 def MakeShop():
     pygame.draw.rect(display_surf,shop_color,(shop_x,shop_y,shop_width,shop_height))
+    pygame.draw.rect(
+    pygame.draw.rect(
+    pygame.draw.rect(
+    pygame.draw.rect(
 
 
 def main():
