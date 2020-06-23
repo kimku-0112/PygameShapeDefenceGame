@@ -1,4 +1,4 @@
-import pygame, sys, random ,math
+import pygame, sys, random ,math , queue
 from pygame.locals import *
 
 FPS             = 60           #┐
@@ -19,27 +19,9 @@ orange          = (255,128,0)       #│
 purple          = (255,0,255)       #│
 cyan            = (0,255,255)       #┘
 
-mapcolor        =[[1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1],
-                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-                  [0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1]]
-                  
-enemy_move      =[[20,60]
-                 ,[60,60],[60,460]
-                 ,[140,460],[140,60]
-                 ,[220,60],[220,460]
-                 ,[300,460],[300,60]
-                 ,[380,60],[380,460]
-                 ,[460,460],[460,60]
-                 ,[540,60],[540,460]
-                 ,[620,460],[620,60]]
+square          = 'square'      #┐
+triangle        = 'triangle'    #│ Define Shape 
+pentagon        = 'pentagon'    #┘
 
 BG_color        = green         #┐
 light_color     = gray          #│ System Color
@@ -54,9 +36,52 @@ attack_up_color = red           #│
 s_tower_color   = green         #│
 delay_up_color  = blue          #┘
 
-square          = 'square'      #┐
-triangle        = 'triangle'    #│ Define Shape 
-pentagon        = 'pentagon'    #┘
+mapcolor        =[[1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1],
+                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+                  [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+                  [0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1]]
+                  
+enemy_move      =[[60,60],[60,460]
+                 ,[140,460],[140,60]
+                 ,[220,60],[220,460]
+                 ,[300,460],[300,60]
+                 ,[380,60],[380,460]
+                 ,[460,460],[460,60]
+                 ,[540,60],[540,460]
+                 ,[620,460],[620,60]]
+                 
+enemy_array     =[[1,triangle ,0,60,0,9],
+                  [1,triangle ,0,60,0,9],
+                  [1,triangle ,0,60,0,9],
+                  [1,triangle ,0,60,0,9],
+                  [1,triangle ,0,60,0,9],
+                  [1,triangle ,0,60,0,9],
+                  [1,triangle ,0,60,0,9],
+                  [1,square   ,0,60,0,16],
+                  [1,square   ,0,60,0,16],
+                  [1,square   ,0,60,0,16],
+                  [1,square   ,0,60,0,16],
+                  [1,square   ,0,60,0,16],
+                  [1,pentagon ,0,60,0,25],
+                  [1,pentagon ,0,60,0,25],
+                  [1,pentagon ,0,60,0,25]]
+life_array      =[[640,480],
+                  [600,480],
+                  [560,480],
+                  [520,480],
+                  [480,480],
+                  [440,480],
+                  [400,480]]
+
+
+
 
 map_width       = int(window_width  / box_size)
 map_heghit      = int(window_height / box_size)-1
@@ -81,7 +106,18 @@ gold_y          = shop_y + 5
 gold_width      = int(shop_width / 4) - 20
 gold_height     = shop_height - 10
 
+tick_cnt = 0
+time_sec = 0
 
+life_ = 5
+
+def Draw_life():
+    global life_
+    for x in range(0,life_):
+        pygame.draw.polygon(display_surf,enemy_color,((life_array[x][0] - 20    , life_array[x][1]      )\
+                                                     ,(life_array[x][0]         , life_array[x][1] - 20 )\
+                                                     ,(life_array[x][0] - 20    , life_array[x][1] - 40 )\
+                                                     ,(life_array[x][0] - 40    , life_array[x][1] - 20 )),  2  )
 def GetBoxAtPixel(x, y):
     for boxx in range(map_width):
         for boxy in range(map_heghit):
@@ -115,27 +151,62 @@ def MakeShop():
     Text_White(attack_up_x + 40 ,attack_up_y + 2,"공격력")
     Text_White(delay_up_x +30   ,delay_up_y + 2 ,"공격속도")
     Text_White(tower_x +30      ,tower_y + 2    ,"타워 구매")
+    
 def Make_Shape(color,shape,x,y):#x,y는 도형 중심의 좌표
     if shape == square:
-        pygame.draw.rect(display_surf,color,(x -(int)(box_size/4),y-(int)(box_size/4),box_size/2,box_size/2))
+        pygame.draw.rect(display_surf,color,(x -15,y-15,30,30))
     elif shape == triangle:
-        pygame.draw.polygon(display_surf,color,((x,y-(int)(box_size/4)),\
-                                                (x+(int)(box_size/8*3*math.tan(math.radians(30))),y+(int)(box_size/8)),\
-                                                (x-(int)(box_size/8*3*math.tan(math.radians(30))),y+(int)(box_size/8))))
+        pygame.draw.polygon(display_surf,color,((x,y-20),\
+                                                (x+10*3*math.tan(math.radians(30)),y+10),\
+                                                (x-10*3*math.tan(math.radians(30)),y+10)))
     elif shape == pentagon:
-        pygame.draw.polygon(display_surf,color,((x,y - 10),\
-                                                (x + 10 * math.cos(math.radians(18)),y - 10 * math.sin(math.radians(18))),\
-                                                (x + 10 * math.cos(math.radians(54)),y + 10 * math.sin(math.radians(54))),\
-                                                (x - 10 * math.cos(math.radians(54)),y + 10 * math.sin(math.radians(54))),\
-                                                (x - 10 * math.cos(math.radians(18)),y - 10 * math.sin(math.radians(18)))))
-def Enemy_move(shape):
-    Make_Shape(enemy_color,shape,x,y)
+        pygame.draw.polygon(display_surf,color,((x,y - 20),\
+                                                (x + 20 * math.cos(math.radians(18)),y - 20 * math.sin(math.radians(18))),\
+                                                (x + 20 * math.cos(math.radians(54)),y + 20 * math.sin(math.radians(54))),\
+                                                (x - 20 * math.cos(math.radians(54)),y + 20 * math.sin(math.radians(54))),\
+                                                (x - 20 * math.cos(math.radians(18)),y - 20 * math.sin(math.radians(18)))))
+def Enemy_move(i):#array[][0] == value //#array[][1] == shape //#array[][2] == x //#array[][3] == y //#array[][4] == cnt //#array[][5] == HP //
+    global enemy_array,enemy_move,life_
+    if i < 15:
+        if enemy_array[i][0]:
+            Make_Shape(enemy_color,enemy_array[i][1],enemy_array[i][2],enemy_array[i][3])
     
+            if enemy_array[i][4] % 2 ==0:
+                enemy_array[i][2]+=1
+            elif enemy_array[i][4] % 4 == 1:
+                enemy_array[i][3]+=1
+            else :
+                enemy_array[i][3]-=1
+            if enemy_array[i][4]==16:
+                life_ -= 1
+                enemy_array[i][0] = 0
+        
+            elif enemy_array[i][2] == enemy_move[enemy_array[i][4]][0] :
+                if enemy_array[i][3] == enemy_move[enemy_array[i][4]][1]:
+                    enemy_array[i][4] += 1
+    
+    
+
+
+def Time_Check():
+    global tick_cnt ,time_sec
+    tick_cnt += 1
+    if tick_cnt == FPS:
+        tick_cnt = 0
+        time_sec += 1
+        
+def Make_Enemy():
+    if time_sec >= 10:
+        for x in range(0,((time_sec-10)//5) ):
+            Enemy_move(x)
+        
+        
+
     
 
 
 def main():
-    global FPS_clock,display_surf,gold,gold_
+    global FPS_clock,display_surf,gold,gold_,TEST_X,TEST_Y,TEST_cnt
     gold  = 0
     gold_ = 0
     pygame.init()
@@ -150,13 +221,9 @@ def main():
     
     while True:
         gold_ = gold_ + 1
-        if gold_ // 30:
+        if gold_ // (FPS/2):
             gold += 10
             gold_ = 0
-        
-        
-        MakeMap()
-        MakeShop()
         
         for event in pygame.event.get(): # event handling loop
             if event.type == QUIT or (event.type == KEYUP and event.key == K_ESCAPE):
@@ -170,9 +237,12 @@ def main():
             #elif event.type == KEYDOWN:
             #   if event.key == pygame.K_ESCAPE:
             #elif event.type == KEYUP:
-        Make_Shape(enemy_color,pentagon,90,90)
-        Make_Shape(enemy_color,square,180,180)
-        Make_Shape(enemy_color,triangle,360,360)
+            
+        MakeMap()
+        MakeShop()
+        Make_Enemy()
+        Time_Check()
+        Draw_life()
         
 
                 
