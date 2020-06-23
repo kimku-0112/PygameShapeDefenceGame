@@ -114,6 +114,16 @@ def MakeShop():
     Text_White(attack_up_x + 40 ,attack_up_y + 2,"공격력")
     Text_White(delay_up_x +30   ,delay_up_y + 2 ,"공격속도")
     Text_White(tower_x +30      ,tower_y + 2    ,"타워 구매")
+def Make_Shape(shape,x,y):#x,y는 중심에서의 좌표
+    
+def Enemy_move(shape):
+    if shape == 'square':
+        
+    elif shape == 'triangle':
+        
+    elif shape == 'pentagon':
+        
+    
     
 
 
@@ -150,6 +160,13 @@ def main():
             elif event.type == MOUSEBUTTONUP:
                 mousex, mousey = event.pos
                 mouseClicked = True
+            #elif event.type == KEYDOWN:
+            #   if event.key == pygame.K_ESCAPE:
+            #elif event.type == KEYUP:
+
+        
+
+                
     
         pygame.display.update()
         FPS_clock.tick(FPS)
