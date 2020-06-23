@@ -81,10 +81,6 @@ gold_y          = shop_y + 5
 gold_width      = int(shop_width / 4) - 20
 gold_height     = shop_height - 10
 
-cos(x)
-sin(x)
-radians(x)
-
 
 def GetBoxAtPixel(x, y):
     for boxx in range(map_width):
@@ -120,19 +116,20 @@ def MakeShop():
     Text_White(delay_up_x +30   ,delay_up_y + 2 ,"공격속도")
     Text_White(tower_x +30      ,tower_y + 2    ,"타워 구매")
 def Make_Shape(color,shape,x,y):#x,y는 도형 중심의 좌표
-    if shape == 'square':
+    if shape == square:
         pygame.draw.rect(display_surf,color,(x -(int)(box_size/4),y-(int)(box_size/4),box_size/2,box_size/2))
-    elif shape == 'triangle':
-        pygame.draw.polygon(display_surf,color,((x,y-(int)(box_size/4)),
-    elif shape == 'pentagon':
-        pygame.draw.polygon(display_surf,color,((x
+    elif shape == triangle:
+        pygame.draw.polygon(display_surf,color,((x,y-(int)(box_size/4)),\
+                                                (x+(int)(box_size/8*3*math.tan(math.radians(30))),y+(int)(box_size/8)),\
+                                                (x-(int)(box_size/8*3*math.tan(math.radians(30))),y+(int)(box_size/8))))
+    elif shape == pentagon:
+        pygame.draw.polygon(display_surf,color,((x,y - 10),\
+                                                (x + 10 * math.cos(math.radians(18)),y - 10 * math.sin(math.radians(18))),\
+                                                (x + 10 * math.cos(math.radians(54)),y + 10 * math.sin(math.radians(54))),\
+                                                (x - 10 * math.cos(math.radians(54)),y + 10 * math.sin(math.radians(54))),\
+                                                (x - 10 * math.cos(math.radians(18)),y - 10 * math.sin(math.radians(18)))))
 def Enemy_move(shape):
-    if shape == 'square':
-        
-    elif shape == 'triangle':
-        
-    elif shape == 'pentagon':
-        
+    Make_Shape(enemy_color,shape,x,y)
     
     
 
@@ -173,7 +170,9 @@ def main():
             #elif event.type == KEYDOWN:
             #   if event.key == pygame.K_ESCAPE:
             #elif event.type == KEYUP:
-
+        Make_Shape(enemy_color,pentagon,90,90)
+        Make_Shape(enemy_color,square,180,180)
+        Make_Shape(enemy_color,triangle,360,360)
         
 
                 
