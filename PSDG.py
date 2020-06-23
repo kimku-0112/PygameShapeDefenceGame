@@ -23,7 +23,8 @@ square          = 'square'      #┐
 triangle        = 'triangle'    #│ Define Shape 
 pentagon        = 'pentagon'    #┘
 
-BG_color        = green         #┐
+choice_color    = cyan          #┐
+BG_color        = green         #│
 light_color     = gray          #│ System Color
 box_color       = white         #│
 highlight_color = blue          #┘
@@ -47,6 +48,18 @@ mapcolor        =[[1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1],
                   [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
                   [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
                   [0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1]]
+                  
+tower_status    =[[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
+                  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                  [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0]]
                   
 enemy_move      =[[60,60],[60,460]
                  ,[140,460],[140,60]
@@ -111,6 +124,10 @@ time_sec = 0
 
 life_ = 5
 
+attack_damage = 1;
+delay = 1;
+
+
 def Draw_life():
     global life_
     for x in range(0,life_):
@@ -141,6 +158,13 @@ def Text_White(x , y , Text) :
     textrect.topleft = [x , y]
     display_surf.blit(text, textrect)
     
+def Big_Text_White(x , y , Text) :
+    font = pygame.font.Font("JSDongkang-Regular.ttf", 100)
+    text = font.render(Text,True,(255,255,255))
+    textrect = text.get_rect()
+    textrect.topleft = [x , y]
+    display_surf.blit(text, textrect)
+    
 def MakeShop():
     pygame.draw.rect(display_surf,shop_color        ,(shop_x,shop_y,shop_width,shop_height))
     pygame.draw.rect(display_surf,delay_up_color    ,(attack_up_x,attack_up_y,attack_up_width,attack_up_height))
@@ -148,9 +172,10 @@ def MakeShop():
     pygame.draw.rect(display_surf,s_tower_color     ,(tower_x,tower_y,tower_width,tower_heghit))
     pygame.draw.rect(display_surf,gold_color        ,(gold_x,gold_y,gold_width,gold_height))
     Text_White(gold_x + 20      , gold_y + 5    , str(gold))
-    Text_White(attack_up_x + 40 ,attack_up_y + 2,"공격력")
-    Text_White(delay_up_x +30   ,delay_up_y + 2 ,"공격속도")
-    Text_White(tower_x +30      ,tower_y + 2    ,"타워 구매")
+    Text_White(attack_up_x ,attack_up_y,"공격력(200):")
+    Text_White(attack_up_x + (attack_up_width*3/4+5) ,attack_up_y,str(attack_damage))
+    Text_White(delay_up_x +5   ,delay_up_y + 2 ,"타워속도(100)")
+    Text_White(tower_x +5      ,tower_y + 2    ,"타워설치(100)")
     
 def Make_Shape(color,shape,x,y):#x,y는 도형 중심의 좌표
     if shape == square:
@@ -165,6 +190,7 @@ def Make_Shape(color,shape,x,y):#x,y는 도형 중심의 좌표
                                                 (x + 20 * math.cos(math.radians(54)),y + 20 * math.sin(math.radians(54))),\
                                                 (x - 20 * math.cos(math.radians(54)),y + 20 * math.sin(math.radians(54))),\
                                                 (x - 20 * math.cos(math.radians(18)),y - 20 * math.sin(math.radians(18)))))
+                                                
 def Enemy_move(i):#array[][0] == value //#array[][1] == shape //#array[][2] == x //#array[][3] == y //#array[][4] == cnt //#array[][5] == HP //
     global enemy_array,enemy_move,life_
     if i < 15:
@@ -197,29 +223,83 @@ def Time_Check():
         
 def Make_Enemy():
     if time_sec >= 10:
-        for x in range(0,((time_sec-10)//5) ):
+        for x in range(0,((time_sec-5)//5) ):
             Enemy_move(x)
+    else :
+        Big_Text_White(300 , 240 , str(10-time_sec))
+
+Attack_up_cost = 200
+Delay_up_cost = 100
+Buy_tower_cost = 100
+
+def Attack_up():
+    global attack_damage , gold
+    if gold >= Attack_up_cost:
+        attack_damage+=1
+        gold -= Attack_up_cost
         
+        
+def Delay_up(m_x,m_y):
+    global tower_status,gold,BG_color,Delay_up_flag
+    if (tower_status[m_y][m_x] == 3)&(gold >= Delay_up_cost):
+        Delay_up_flag = 0
+        gold -= Delay_up_cost
+        BG_color = green
+        tower_status[m_y][m_x] = 4
+    elif (tower_status[m_y][m_x] == 4)&(gold >= Delay_up_cost):
+        Delay_up_flag = 0
+        gold -= Delay_up_cost
+        BG_color = green
+        tower_status[m_y][m_x] = 5
+    else:
+        BG_color = green
+        Delay_up_flag = 0
+        
+def Buy_tower(m_x,m_y):
+    global tower_status,gold,BG_color,Delay_up_flag
+    if (tower_status[m_y][m_x] == 1):
+        Delay_up_flag = 0
+        tower_status[m_y][m_x] = 3
+        gold -= Delay_up_cost
+        BG_color = green
+    else:
+        BG_color = green
+        Delay_up_flag = 0
+
+def Build_tower():
+    global tower_status
+    for y in range(0,11):
+        for x in range(0,15):
+            if tower_status[y][x] == 3:
+                Make_Shape(tower_color,triangle,((x*40)+20),((y*40)+60))
+            elif tower_status[y][x] == 4:
+                Make_Shape(tower_color,square,((x*40)+20),((y*40)+60))
+            elif tower_status[y][x] == 5:
+                Make_Shape(tower_color,pentagon,((x*40)+20),((y*40)+60))
         
 
     
 
 
 def main():
-    global FPS_clock,display_surf,gold,gold_,TEST_X,TEST_Y,TEST_cnt
-    gold  = 0
+    global FPS_clock,display_surf,gold,gold_,BG_color
+    gold  = 100
     gold_ = 0
     pygame.init()
     FPS_clock    = pygame.time.Clock()
     display_surf = pygame.display.set_mode((window_width,window_height ))
     pygame.display.set_caption('Shape Defence Game')
     
-    
+    Delay_up_flag = 0
+    Buy_tower_flag =0
     
     mouse_x     = 0
     mouse_y     = 0
+    m_x = 0
+    m_y = 0
     
     while True:
+        mouseClicked = False
         gold_ = gold_ + 1
         if gold_ // (FPS/2):
             gold += 10
@@ -231,22 +311,52 @@ def main():
                 sys.exit()
             elif event.type == MOUSEMOTION:
                 mousex, mousey = event.pos
-            elif event.type == MOUSEBUTTONUP:
+            elif event.type == MOUSEBUTTONDOWN:
                 mousex, mousey = event.pos
+                
                 mouseClicked = True
-            #elif event.type == KEYDOWN:
-            #   if event.key == pygame.K_ESCAPE:
-            #elif event.type == KEYUP:
+        m_x = (mousex//40)
+        if mousey<=40:
+            m_y = 0
+            m_x = 0
+        else :
+            m_y = ((mousey -40)//40)
+         
+        if mouseClicked:
             
+            if (mousey >= shop_y) & (mousey <= (shop_y+shop_height)):
+                Delay_up_flag = 0
+                Buy_tower_flag = 0
+                BG_color = green
+                if ((mousex >= attack_up_x) & (mousex <= ((attack_up_x+attack_up_width)))):
+                    Attack_up()
+                elif ((mousex >= delay_up_x) & (mousex <= (delay_up_x+delay_up_width))):
+                    if gold>=100:
+                        Delay_up_flag = 1
+                        BG_color = choice_color
+                elif ((mousex >= tower_x) & (mousex <= (tower_x+tower_width))):
+                    if gold>=100:
+                        Buy_tower_flag = 1
+                        BG_color = choice_color
+            elif Delay_up_flag:
+                    Buy_tower_flag = 0
+                    Delay_up(m_x,m_y)
+                    
+            elif Buy_tower_flag:
+                    Buy_tower(m_x,m_y)
+            else:
+                Delay_up_flag = 0
+                Buy_tower_flag = 0
+                BG_color = green
+            
+
         MakeMap()
         MakeShop()
         Make_Enemy()
         Time_Check()
-        Draw_life()
-        
-
+        Draw_life()        
+        Build_tower()
                 
-    
         pygame.display.update()
         FPS_clock.tick(FPS)
     
