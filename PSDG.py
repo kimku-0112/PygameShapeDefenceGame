@@ -1,4 +1,4 @@
-import pygame, sys, random
+import pygame, sys, random ,math
 from pygame.locals import *
 
 FPS             = 60           #┐
@@ -81,6 +81,11 @@ gold_y          = shop_y + 5
 gold_width      = int(shop_width / 4) - 20
 gold_height     = shop_height - 10
 
+cos(x)
+sin(x)
+radians(x)
+
+
 def GetBoxAtPixel(x, y):
     for boxx in range(map_width):
         for boxy in range(map_heghit):
@@ -114,8 +119,13 @@ def MakeShop():
     Text_White(attack_up_x + 40 ,attack_up_y + 2,"공격력")
     Text_White(delay_up_x +30   ,delay_up_y + 2 ,"공격속도")
     Text_White(tower_x +30      ,tower_y + 2    ,"타워 구매")
-def Make_Shape(shape,x,y):#x,y는 중심에서의 좌표
-    
+def Make_Shape(color,shape,x,y):#x,y는 도형 중심의 좌표
+    if shape == 'square':
+        pygame.draw.rect(display_surf,color,(x -(int)(box_size/4),y-(int)(box_size/4),box_size/2,box_size/2))
+    elif shape == 'triangle':
+        pygame.draw.polygon(display_surf,color,((x,y-(int)(box_size/4)),
+    elif shape == 'pentagon':
+        pygame.draw.polygon(display_surf,color,((x
 def Enemy_move(shape):
     if shape == 'square':
         
