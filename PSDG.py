@@ -70,21 +70,21 @@ enemy_move      =[[60,60],[60,460]
                  ,[540,60],[540,460]
                  ,[620,460],[620,60]]
                  
-enemy_array     =[[1,triangle ,0,60,0,9],
-                  [1,triangle ,0,60,0,9],
-                  [1,triangle ,0,60,0,9],
-                  [1,triangle ,0,60,0,9],
-                  [1,triangle ,0,60,0,9],
-                  [1,triangle ,0,60,0,9],
-                  [1,triangle ,0,60,0,9],
-                  [1,square   ,0,60,0,16],
-                  [1,square   ,0,60,0,16],
-                  [1,square   ,0,60,0,16],
-                  [1,square   ,0,60,0,16],
-                  [1,square   ,0,60,0,16],
-                  [1,pentagon ,0,60,0,25],
-                  [1,pentagon ,0,60,0,25],
-                  [1,pentagon ,0,60,0,25]]
+enemy_array     =[[1,triangle ,0,60,0,27,0],
+                  [1,triangle ,0,60,0,27,0],
+                  [1,triangle ,0,60,0,27,0],
+                  [1,triangle ,0,60,0,27,0],
+                  [1,triangle ,0,60,0,27,0],
+                  [1,triangle ,0,60,0,27,0],
+                  [1,triangle ,0,60,0,27,0],
+                  [1,square   ,0,60,0,48,0],
+                  [1,square   ,0,60,0,48,0],
+                  [1,square   ,0,60,0,48,0],
+                  [1,square   ,0,60,0,48,0],
+                  [1,square   ,0,60,0,48,0],
+                  [1,pentagon ,0,60,0,75,0],
+                  [1,pentagon ,0,60,0,75,0],
+                  [1,pentagon ,0,60,0,75,0]]
 life_array      =[[640,480],
                   [600,480],
                   [560,480],
@@ -206,7 +206,6 @@ def Enemy_move(i):#array[][0] == value //#array[][1] == shape //#array[][2] == x
             if enemy_array[i][4]==16:
                 life_ -= 1
                 enemy_array[i][0] = 0
-        
             elif enemy_array[i][2] == enemy_move[enemy_array[i][4]][0] :
                 if enemy_array[i][3] == enemy_move[enemy_array[i][4]][1]:
                     enemy_array[i][4] += 1
@@ -217,14 +216,17 @@ def Enemy_move(i):#array[][0] == value //#array[][1] == shape //#array[][2] == x
 def Time_Check():
     global tick_cnt ,time_sec
     tick_cnt += 1
-    if tick_cnt == FPS:
+    if tick_cnt == (FPS/4):
         tick_cnt = 0
         time_sec += 1
         
 def Make_Enemy():
     if time_sec >= 10:
-        for x in range(0,((time_sec-5)//5) ):
+        for x in range((time_sec-10)//5):
             Enemy_move(x)
+            if x <=14:
+                if enemy_array[x][0]:
+                    enemy_array[x][6] = 1
     else :
         Big_Text_White(300 , 240 , str(10-time_sec))
 
@@ -276,7 +278,49 @@ def Build_tower():
                 Make_Shape(tower_color,square,((x*40)+20),((y*40)+60))
             elif tower_status[y][x] == 5:
                 Make_Shape(tower_color,pentagon,((x*40)+20),((y*40)+60))
-        
+                
+targetnum = 0
+game_win_flag = 0
+target_flag = 0
+
+
+def Target():
+    global targetnum,game_win_flag,target_flag
+    target_flag = 0
+    for x in range(0,15):
+        if (enemy_array[x][0])&(enemy_array[x][6]):
+            targetnum = x
+            target_flag = 1
+            break
+    game_win_flag = 1;
+    
+def Attack(x,y):
+    global enemy_array
+    if math.s((enemy_array[targetnum][2] - (x+20))**2+(enemy_array[targetnum][3]-(y+20))**2)
+        pygame.draw.lines(display_surf,red,False,((enemy_array[targetnum][2],enemy_array[targetnum][3]),(x+20,y+20)),10)
+        enemy_array[targetnum][5] -= attack_damage   
+        if enemy_array[targetnum][5] <= 0:
+            enemy_array[targetnum][0] = 0
+
+def Tri_Attack():
+    for y in range(0,11):
+        for x in range(0,15):
+            if tower_status[y][x] == 3:
+                Attack(x*40,(y+1)*40)
+                
+    
+def Squa_Attack():
+    for y in range(0,11):
+        for x in range(0,15):
+            if tower_status[y][x] == 4:
+                Attack(x*40,(y+1)*40)
+                
+def Penta_Attack():
+    for y in range(0,11):
+        for x in range(0,15):
+            if tower_status[y][x] == 5:
+                Attack(x*40,(y+1)*40)
+    
 
     
 
@@ -356,7 +400,15 @@ def main():
         Time_Check()
         Draw_life()        
         Build_tower()
-                
+        Target()
+        if target_flag == 1:
+            if ((tick_cnt%FPS)>=1)&((tick_cnt%FPS)<=3):
+                Tri_Attack()
+            if ((tick_cnt%(FPS/3*2))>=1)&((tick_cnt%(FPS/2))<=3):
+                Squa_Attack()
+            if ((tick_cnt%(FPS/3))>=1)&((tick_cnt%(FPS/3))<=3):
+                Penta_Attack()
+            
         pygame.display.update()
         FPS_clock.tick(FPS)
     
