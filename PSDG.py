@@ -37,6 +37,17 @@ attack_up_color = red           #│
 s_tower_color   = green         #│
 delay_up_color  = blue          #┘
 
+Attack_up_cost  = 200
+Delay_up_cost   = 100
+Buy_tower_cost  = 100
+targetnum       = 0
+win_flag        = 0
+lose_flag       = 0
+target_flag     = 0
+Delay_up_flag   = 0
+Buy_tower_flag  = 0
+Hard_Mode_flag   = 0
+
 mapcolor        =[[1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1],
                   [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
                   [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
@@ -70,21 +81,54 @@ enemy_move      =[[60,60],[60,460]
                  ,[540,60],[540,460]
                  ,[620,460],[620,60]]
                  
-enemy_array     =[[1,triangle ,0,60,0,27,0],
-                  [1,triangle ,0,60,0,27,0],
-                  [1,triangle ,0,60,0,27,0],
-                  [1,triangle ,0,60,0,27,0],
-                  [1,triangle ,0,60,0,27,0],
-                  [1,triangle ,0,60,0,27,0],
-                  [1,triangle ,0,60,0,27,0],
-                  [1,square   ,0,60,0,48,0],
-                  [1,square   ,0,60,0,48,0],
-                  [1,square   ,0,60,0,48,0],
-                  [1,square   ,0,60,0,48,0],
-                  [1,square   ,0,60,0,48,0],
-                  [1,pentagon ,0,60,0,75,0],
-                  [1,pentagon ,0,60,0,75,0],
-                  [1,pentagon ,0,60,0,75,0]]
+E_enemy_array   =[[1,triangle ,0,60,0,81,0,100],
+                  [1,triangle ,0,60,0,81,0,100],
+                  [1,triangle ,0,60,0,81,0,100],
+                  [1,triangle ,0,60,0,81,0,100],
+                  [1,triangle ,0,60,0,81,0,100],
+                  [1,triangle ,0,60,0,81,0,100],
+                  [1,triangle ,0,60,0,81,0,100],
+                  [1,square   ,0,60,0,192,0,200],
+                  [1,square   ,0,60,0,192,0,200],
+                  [1,square   ,0,60,0,192,0,200],
+                  [1,square   ,0,60,0,192,0,200],
+                  [1,square   ,0,60,0,192,0,200],
+                  [1,pentagon ,0,60,0,375,0,300],
+                  [1,pentagon ,0,60,0,375,0,300],
+                  [1,pentagon ,0,60,0,375,0,300]]
+E_enemy_unit = 15
+                  
+H_enemy_array     =[[1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,triangle ,0,60,0,243,0,50],
+                    [1,square   ,0,60,0,768,0,70],
+                    [1,square   ,0,60,0,768,0,70],
+                    [1,square   ,0,60,0,768,0,70],
+                    [1,square   ,0,60,0,768,0,70],
+                    [1,square   ,0,60,0,768,0,70],
+                    [1,square   ,0,60,0,768,0,70],
+                    [1,square   ,0,60,0,768,0,70],
+                    [1,square   ,0,60,0,768,0,70],
+                    [1,square   ,0,60,0,768,0,70],
+                    [1,square   ,0,60,0,768,0,70],
+                    [1,pentagon ,0,60,0,1875,0,100],
+                    [1,pentagon ,0,60,0,1875,0,100],
+                    [1,pentagon ,0,60,0,1875,0,100],
+                    [1,pentagon ,0,60,0,1875,0,100],
+                    [1,pentagon ,0,60,0,1875,0,100],
+                    [1,pentagon ,0,60,0,1875,0,100]]
+H_enemy_unit = 30
 life_array      =[[640,480],
                   [600,480],
                   [560,480],
@@ -94,8 +138,8 @@ life_array      =[[640,480],
                   [400,480]]
 
 
-
-
+enemy_unit      = E_enemy_unit
+enemy_array     = E_enemy_array
 map_width       = int(window_width  / box_size)
 map_heghit      = int(window_height / box_size)-1
 shop_x          = 0
@@ -124,8 +168,7 @@ time_sec = 0
 
 life_ = 5
 
-attack_damage = 1;
-delay = 1;
+attack_damage = 1
 
 
 def Draw_life():
@@ -159,7 +202,7 @@ def Text_White(x , y , Text) :
     display_surf.blit(text, textrect)
     
 def Big_Text_White(x , y , Text) :
-    font = pygame.font.Font("JSDongkang-Regular.ttf", 100)
+    font = pygame.font.Font("JSDongkang-Regular.ttf", 70)
     text = font.render(Text,True,(255,255,255))
     textrect = text.get_rect()
     textrect.topleft = [x , y]
@@ -193,16 +236,16 @@ def Make_Shape(color,shape,x,y):#x,y는 도형 중심의 좌표
                                                 
 def Enemy_move(i):#array[][0] == value //#array[][1] == shape //#array[][2] == x //#array[][3] == y //#array[][4] == cnt //#array[][5] == HP //
     global enemy_array,enemy_move,life_
-    if i < 15:
+    if i < enemy_unit:
         if enemy_array[i][0]:
             Make_Shape(enemy_color,enemy_array[i][1],enemy_array[i][2],enemy_array[i][3])
     
             if enemy_array[i][4] % 2 ==0:
-                enemy_array[i][2]+=1
+                enemy_array[i][2]+=(60/FPS)
             elif enemy_array[i][4] % 4 == 1:
-                enemy_array[i][3]+=1
+                enemy_array[i][3]+=(60/FPS)
             else :
-                enemy_array[i][3]-=1
+                enemy_array[i][3]-=(60/FPS)
             if enemy_array[i][4]==16:
                 life_ -= 1
                 enemy_array[i][0] = 0
@@ -216,23 +259,19 @@ def Enemy_move(i):#array[][0] == value //#array[][1] == shape //#array[][2] == x
 def Time_Check():
     global tick_cnt ,time_sec
     tick_cnt += 1
-    if tick_cnt == (FPS/4):
+    if tick_cnt == (FPS):
         tick_cnt = 0
         time_sec += 1
         
 def Make_Enemy():
     if time_sec >= 10:
-        for x in range((time_sec-10)//5):
+        for x in range((time_sec-10)//3):
             Enemy_move(x)
-            if x <=14:
+            if x < enemy_unit:
                 if enemy_array[x][0]:
                     enemy_array[x][6] = 1
     else :
         Big_Text_White(300 , 240 , str(10-time_sec))
-
-Attack_up_cost = 200
-Delay_up_cost = 100
-Buy_tower_cost = 100
 
 def Attack_up():
     global attack_damage , gold
@@ -258,15 +297,15 @@ def Delay_up(m_x,m_y):
         Delay_up_flag = 0
         
 def Buy_tower(m_x,m_y):
-    global tower_status,gold,BG_color,Delay_up_flag
-    if (tower_status[m_y][m_x] == 1):
-        Delay_up_flag = 0
+    global tower_status,gold,BG_color,Buy_tower_flag
+    if (tower_status[m_y][m_x] == 1)&(gold>=100):
         tower_status[m_y][m_x] = 3
         gold -= Delay_up_cost
         BG_color = green
+        Buy_tower_flag = 0
     else:
         BG_color = green
-        Delay_up_flag = 0
+        Buy_tower_flag = 0
 
 def Build_tower():
     global tower_status
@@ -279,28 +318,27 @@ def Build_tower():
             elif tower_status[y][x] == 5:
                 Make_Shape(tower_color,pentagon,((x*40)+20),((y*40)+60))
                 
-targetnum = 0
-game_win_flag = 0
-target_flag = 0
-
-
 def Target():
-    global targetnum,game_win_flag,target_flag
+    global targetnum,win_flag,target_flag
     target_flag = 0
-    for x in range(0,15):
-        if (enemy_array[x][0])&(enemy_array[x][6]):
-            targetnum = x
-            target_flag = 1
-            break
-    game_win_flag = 1;
+    for x in range(0,enemy_unit):
+        if (enemy_array[x][0]):
+            if(enemy_array[x][6]):
+                targetnum = x
+                target_flag = 1
+                break
+        else :
+            if x == (enemy_unit-1):
+                win_flag = 1;
     
 def Attack(x,y):
-    global enemy_array
-    if math.s((enemy_array[targetnum][2] - (x+20))**2+(enemy_array[targetnum][3]-(y+20))**2)
+    global enemy_array,gold
+    if math.sqrt((enemy_array[targetnum][2] - (x+20))**2+(enemy_array[targetnum][3]-(y+20))**2) <= 300:
         pygame.draw.lines(display_surf,red,False,((enemy_array[targetnum][2],enemy_array[targetnum][3]),(x+20,y+20)),10)
         enemy_array[targetnum][5] -= attack_damage   
         if enemy_array[targetnum][5] <= 0:
             enemy_array[targetnum][0] = 0
+            gold += enemy_array[targetnum][7]
 
 def Tri_Attack():
     for y in range(0,11):
@@ -326,19 +364,19 @@ def Penta_Attack():
 
 
 def main():
-    global FPS_clock,display_surf,gold,gold_,BG_color
-    gold  = 100
+    global FPS_clock,display_surf,gold,gold_,BG_color,lose_flag,win_flag,Hard_Mode_flag,\
+           Delay_up_flag,Buy_tower_flag,enemy_array,life_,time_sec,enemy_unit,attack_damage,tower_status
+    gold  = 0
     gold_ = 0
     pygame.init()
     FPS_clock    = pygame.time.Clock()
     display_surf = pygame.display.set_mode((window_width,window_height ))
     pygame.display.set_caption('Shape Defence Game')
     
-    Delay_up_flag = 0
-    Buy_tower_flag =0
+
     
-    mouse_x     = 0
-    mouse_y     = 0
+    mousex     = 0
+    mousey     = 0
     m_x = 0
     m_y = 0
     
@@ -383,32 +421,71 @@ def main():
                         Buy_tower_flag = 1
                         BG_color = choice_color
             elif Delay_up_flag:
-                    Buy_tower_flag = 0
-                    Delay_up(m_x,m_y)
+                Buy_tower_flag = 0
+                Delay_up(m_x,m_y)
                     
             elif Buy_tower_flag:
-                    Buy_tower(m_x,m_y)
+                Delay_up_flag = 0
+                Buy_tower(m_x,m_y)
             else:
                 Delay_up_flag = 0
                 Buy_tower_flag = 0
                 BG_color = green
-            
-
-        MakeMap()
-        MakeShop()
-        Make_Enemy()
-        Time_Check()
-        Draw_life()        
-        Build_tower()
-        Target()
-        if target_flag == 1:
-            if ((tick_cnt%FPS)>=1)&((tick_cnt%FPS)<=3):
-                Tri_Attack()
-            if ((tick_cnt%(FPS/3*2))>=1)&((tick_cnt%(FPS/2))<=3):
-                Squa_Attack()
-            if ((tick_cnt%(FPS/3))>=1)&((tick_cnt%(FPS/3))<=3):
-                Penta_Attack()
-            
+        if life_ <= 0:
+            lose_flag = 1;
+        if (win_flag == 0) & (lose_flag == 0):
+            MakeMap()
+            MakeShop()
+            Make_Enemy()
+            Time_Check()
+            Draw_life()        
+            Build_tower()
+            Target()
+            if target_flag == 1:
+                if ((tick_cnt%FPS)>=1)&((tick_cnt%FPS)<=3):
+                    Tri_Attack()
+                if ((tick_cnt%(FPS/3*2))>=1)&((tick_cnt%(FPS/2))<=3):
+                    Squa_Attack()
+                if ((tick_cnt%(FPS/3))>=1)&((tick_cnt%(FPS/3))<=3):
+                    Penta_Attack()
+        elif win_flag == 1:
+            display_surf.fill(blue)
+            Big_Text_White(160,200,"YOU WIN!!")
+            if Hard_Mode_flag == 0:
+                Text_White(240,300,"Hard Mode?")
+                pygame.draw.rect(display_surf,shop_color,(235,290,140,30),2)
+                if (mouseClicked):
+                    if (mousex >= 240)&(mousex <= 440):
+                        if (mousey>=300)&(mousey<=320):
+                            win_flag = 0;
+                            Hard_Mode_flag = 1
+                            enemy_array = H_enemy_array
+                            life_ = 3
+                            attack_damage = 1
+                            time_sec = 0
+                            gold = 0
+                            enemy_unit      = H_enemy_unit
+                            tower_status    =[[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
+                                              [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                                              [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                                              [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                                              [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                                              [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                                              [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                                              [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                                              [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                                              [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+                                              [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0]]
+            else:
+                if mouseClicked:
+                    pygame.quit()
+                    sys.exit()
+        elif lose_flag == 1:
+            display_surf.fill(red)
+            Big_Text_White(140,200,"YOU LOSE!!")
+            if mouseClicked:
+                    pygame.quit()
+                    sys.exit()
         pygame.display.update()
         FPS_clock.tick(FPS)
     
