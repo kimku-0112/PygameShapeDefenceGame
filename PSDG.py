@@ -46,7 +46,8 @@ lose_flag       = 0
 target_flag     = 0
 Delay_up_flag   = 0
 Buy_tower_flag  = 0
-Hard_Mode_flag   = 0
+Hard_Mode_flag  = 0
+
 
 mapcolor        =[[1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1],
                   [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
@@ -302,6 +303,7 @@ def Buy_tower(m_x,m_y):
         tower_status[m_y][m_x] = 3
         gold -= Delay_up_cost
         BG_color = green
+        buildsound.play()
         Buy_tower_flag = 0
     else:
         BG_color = green
@@ -338,12 +340,15 @@ def Attack(x,y):
         enemy_array[targetnum][5] -= attack_damage   
         if enemy_array[targetnum][5] <= 0:
             enemy_array[targetnum][0] = 0
+            goldsound.play()
             gold += enemy_array[targetnum][7]
 
 def Tri_Attack():
     for y in range(0,11):
         for x in range(0,15):
             if tower_status[y][x] == 3:
+                if ((tick_cnt%FPS)==1):
+                    shotsound.play()
                 Attack(x*40,(y+1)*40)
                 
     
@@ -351,12 +356,16 @@ def Squa_Attack():
     for y in range(0,11):
         for x in range(0,15):
             if tower_status[y][x] == 4:
+                if ((tick_cnt%(FPS/3*2))==1):
+                    shotsound.play()
                 Attack(x*40,(y+1)*40)
                 
 def Penta_Attack():
     for y in range(0,11):
         for x in range(0,15):
             if tower_status[y][x] == 5:
+                if ((tick_cnt%(FPS/3))==1):
+                    shotsound.play()
                 Attack(x*40,(y+1)*40)
     
 
@@ -365,15 +374,25 @@ def Penta_Attack():
 
 def main():
     global FPS_clock,display_surf,gold,gold_,BG_color,lose_flag,win_flag,Hard_Mode_flag,\
-           Delay_up_flag,Buy_tower_flag,enemy_array,life_,time_sec,enemy_unit,attack_damage,tower_status
+           Delay_up_flag,Buy_tower_flag,enemy_array,life_,time_sec,enemy_unit,attack_damage,tower_status,\
+           shotsound,goldsound,winsound,losesound,buildsound
     gold  = 0
     gold_ = 0
     pygame.init()
     FPS_clock    = pygame.time.Clock()
     display_surf = pygame.display.set_mode((window_width,window_height ))
     pygame.display.set_caption('Shape Defence Game')
+    pygame.mixer.init()
     
-
+    pygame.mixer.music.load("BGM1_.mp3")         #BGM
+    shotsound   = pygame.mixer.Sound("S_shot.wav")
+    goldsound   = pygame.mixer.Sound("S_gold.wav")
+    winsound    = pygame.mixer.Sound("S_win.wav")
+    losesound   = pygame.mixer.Sound("S_lose.wav")
+    buildsound  = pygame.mixer.Sound("S_buld.wav")
+    
+    pygame.mixer.music.set_volume(1)
+    pygame.mixer.music.play(-1)
     
     mousex     = 0
     mousey     = 0
@@ -449,6 +468,7 @@ def main():
                 if ((tick_cnt%(FPS/3))>=1)&((tick_cnt%(FPS/3))<=3):
                     Penta_Attack()
         elif win_flag == 1:
+            winsound.play()
             display_surf.fill(blue)
             Big_Text_White(160,200,"YOU WIN!!")
             if Hard_Mode_flag == 0:
@@ -481,6 +501,7 @@ def main():
                     pygame.quit()
                     sys.exit()
         elif lose_flag == 1:
+            losesound.play()
             display_surf.fill(red)
             Big_Text_White(140,200,"YOU LOSE!!")
             if mouseClicked:
