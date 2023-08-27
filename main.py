@@ -196,14 +196,14 @@ def MakeMap():
             else :              pygame.draw.rect(display_surf,BG_color  ,(x * box_size,(y+1) * box_size,box_size,box_size))
     
 def Text_White(x , y , Text) :
-    font = pygame.font.Font("JSDongkang-Regular.ttf", 20)
+    font = pygame.font.Font("./font/JSDongkang-Regular.ttf", 20)
     text = font.render(Text,True,(255,255,255))
     textrect = text.get_rect()
     textrect.topleft = [x , y]
     display_surf.blit(text, textrect)
     
 def Big_Text_White(x , y , Text) :
-    font = pygame.font.Font("JSDongkang-Regular.ttf", 70)
+    font = pygame.font.Font("./font/JSDongkang-Regular.ttf", 70)
     text = font.render(Text,True,(255,255,255))
     textrect = text.get_rect()
     textrect.topleft = [x , y]
@@ -384,12 +384,12 @@ def main():
     pygame.display.set_caption('Shape Defence Game')
     pygame.mixer.init()
     
-    pygame.mixer.music.load("BGM1_.mp3")         #BGM
-    shotsound   = pygame.mixer.Sound("S_shot.wav")
-    goldsound   = pygame.mixer.Sound("S_gold.wav")
-    winsound    = pygame.mixer.Sound("S_win.wav")
-    losesound   = pygame.mixer.Sound("S_lose.wav")
-    buildsound  = pygame.mixer.Sound("S_buld.wav")
+    pygame.mixer.music.load("./audio/BGM1_.mp3")         #BGM
+    shotsound   = pygame.mixer.Sound("./audio/S_shot.wav")
+    goldsound   = pygame.mixer.Sound("./audio/S_gold.wav")
+    winsound    = pygame.mixer.Sound("./audio/S_win.wav")
+    losesound   = pygame.mixer.Sound("./audio/S_lose.wav")
+    buildsound  = pygame.mixer.Sound("./audio/S_buld.wav")
     
     pygame.mixer.music.set_volume(1)
     pygame.mixer.music.play(-1)
